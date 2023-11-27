@@ -5,10 +5,11 @@ from flask_app.database import db
 
 bp = Blueprint('api',__name__, url_prefix='/api')
 
-@bp.route('/getCoordinatesByFilter/', methods=['GET'])
-@bp.route('/getCoordinatesByFilter/<id>', methods=['GET'])
-def getCoordinatesByFilter(id=1):
-    incident = db.session.get_one(inviales,id)
+@bp.route('/getIncidentById/', methods=['GET'])
+@bp.route('/getIncidentById/<id>', methods=['GET'])
+def getCoordinatesById(id=1):
+    incident = db.get_or_404(inviales,id)
+
     resp = {'id': incident.id,
             'folio': incident.folio,
             'creacion': incident.creacion,
@@ -28,6 +29,16 @@ def getCoordinatesByFilter(id=1):
     # return jsonify({'emote': 'Pepega', 'image-link':'https://pepegaclapwr.com/assets/rsz_pepega.png'})
     return jsonify(resp)
 
-@bp.route('/hello', methods=['GET'])
-def hello():
-    return 'Hello'
+@bp.route('/getCoordinatesByFilter/', methods=['GET'])
+def getCoordinatesByFilter():
+    args = request.args
+
+    if 'creacion' in args:
+        return db.get_or_404(db.select(inviales).filter_by(inicio=args['creacion']))
+    
+    registers = db.session.execute(db.select(db.metadata.tables['inviales'].c.latitud,db.metadata.tables['inviales'].c.longitud).limit(100).order_by(inviales.creacion))
+
+    if registers:
+        return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
+    
+    return 404
