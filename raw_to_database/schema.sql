@@ -3,11 +3,9 @@ DROP TABLE IF EXISTS datos_abiertos.inViales;
 CREATE TABLE datos_abiertos.inViales (
 	id INT auto_increment NOT NULL PRIMARY KEY,
 	folio varchar(50) unique NOT NULL,
-	fecha_creacion DATE NULL,
-	hora_creacion varchar(20) NULL,
+	creacion DATETIME NULL,
 	dia_semana varchar(20) NULL,
-	fecha_cierre DATE NULL,
-	hora_cierre varchar(20) NULL,
+	cierre DATETIME NULL,
 	tipo_incidente_c4 varchar(100) NULL,
 	incidente_c4 varchar(100) NULL,
 	alcaldia_inicio varchar(50) NULL,
