@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask import jsonify, request, g
 from flask_app.api.models.datos_viales import inviales
 from flask_app.database import db
+from sqlalchemy import and_
 
 bp = Blueprint('api',__name__, url_prefix='/api')
 
@@ -16,7 +17,7 @@ def getCoordinatesById(id=1):
             'dia_semana': incident.dia_semana,
             'cierre': incident.cierre,
             'tipo_incidente_c4': incident.tipo_incidente_c4,
-            'alcalcia_inicio': incident.alcaldia_inicio,
+            'alcaldia_inicio': incident.alcaldia_inicio,
             'latitud': incident.latitud,
             'longitud': incident.longitud,
             'codigo_cierre': incident.codigo_cierre,
@@ -33,12 +34,42 @@ def getCoordinatesById(id=1):
 def getCoordinatesByFilter():
     args = request.args
 
-    if 'creacion' in args:
-        return db.get_or_404(db.select(inviales).filter_by(inicio=args['creacion']))
-    
-    registers = db.session.execute(db.select(db.metadata.tables['inviales'].c.latitud,db.metadata.tables['inviales'].c.longitud).limit(100).order_by(inviales.creacion))
+    conditions = []
+    inicio = None
+    fnal = None
+    limit = 100
 
-    if registers:
-        return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
+    table = db.metadata.tables['inviales']
+
+    if 'creacion' in args:
+        conditions.append(table.c.creacion == args['creacion'])
+    if 'id' in args:
+        conditions.append(table.c.id == args['id'])
+    if 'inicio' in args:
+        conditions.append(table.c.creacion >= args['inicio'])
+    if 'final' in args:
+        conditions.append(table.c.creacion <= args['final'])
+    if 'dia_semana' in args:
+        conditions.append(table.c.dia_semana.like(args['dia_semana']))
+    if 'alcaldia_inicio' in args:
+        conditions.append(table.c.alcaldia_inicio.like(args['alcaldia_inicio']))
+    if 'alcaldia_cierre' in args:
+        conditions.append(table.c.alcaldia_cierre.like(args['alcaldia_cierre']))
+    if 'limit' in args:
+        try:
+            limit = min(int(args['limit']), 5000)
+        except ValueError:
+            pass
     
-    return 404
+    
+    
+    if len(conditions):
+        registers = db.session.execute(db.select(table.c.latitud,table.c.longitud).where(and_(*conditions)).limit(limit).order_by(inviales.creacion))
+        return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
+    else:
+        registers = db.session.execute(db.select(db.metadata.tables['inviales'].c.latitud,db.metadata.tables['inviales'].c.longitud).limit(limit).order_by(inviales.creacion))
+
+        if registers:
+            return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
+    
+    return 'No data to show', 404
