@@ -1,43 +1,12 @@
-from flask import Blueprint
-from flask import jsonify, request, g
+from flask import jsonify, Response
 from flask_app.api.models.datos_viales import inviales
 from flask_app.database import db
 from sqlalchemy import and_
 
-bp = Blueprint('api',__name__, url_prefix='/api')
 
-@bp.route('/getIncidentById/', methods=['GET'])
-@bp.route('/getIncidentById/<id>', methods=['GET'])
-def getCoordinatesById(id=1):
-    incident = db.get_or_404(inviales,id)
-
-    resp = {'id': incident.id,
-            'folio': incident.folio,
-            'creacion': incident.creacion,
-            'dia_semana': incident.dia_semana,
-            'cierre': incident.cierre,
-            'tipo_incidente_c4': incident.tipo_incidente_c4,
-            'alcaldia_inicio': incident.alcaldia_inicio,
-            'latitud': incident.latitud,
-            'longitud': incident.longitud,
-            'codigo_cierre': incident.codigo_cierre,
-            'clas_con_f_alarma': incident.clas_con_f_alarma,
-            'tipo_entrada': incident.tipo_entrada,
-            'alcaldia_cierre': incident.alcaldia_cierre,
-            'colonia': incident.colonia
-            }
-
-    # return jsonify({'emote': 'Pepega', 'image-link':'https://pepegaclapwr.com/assets/rsz_pepega.png'})
-    return jsonify(resp)
-
-@bp.route('/getCoordinatesByFilter/', methods=['GET'])
-def getCoordinatesByFilter():
-    args = request.args
-
+def filter_coordinates(args):
     conditions = []
-    inicio = None
-    fnal = None
-    limit = 100
+    limit = 200
 
     table = db.metadata.tables['inviales']
 
@@ -61,8 +30,6 @@ def getCoordinatesByFilter():
         except ValueError:
             pass
     
-    
-    
     if len(conditions):
         registers = db.session.execute(db.select(table.c.latitud,table.c.longitud).where(and_(*conditions)).limit(limit).order_by(inviales.creacion))
         return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
@@ -73,3 +40,26 @@ def getCoordinatesByFilter():
             return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
     
     return 'No data to show', 404
+
+
+def id_coordinates(id):
+    incident = db.get_or_404(inviales,id)
+
+    resp = {'id': incident.id,
+            'folio': incident.folio,
+            'creacion': incident.creacion,
+            'dia_semana': incident.dia_semana,
+            'cierre': incident.cierre,
+            'tipo_incidente_c4': incident.tipo_incidente_c4,
+            'alcaldia_inicio': incident.alcaldia_inicio,
+            'latitud': incident.latitud,
+            'longitud': incident.longitud,
+            'codigo_cierre': incident.codigo_cierre,
+            'clas_con_f_alarma': incident.clas_con_f_alarma,
+            'tipo_entrada': incident.tipo_entrada,
+            'alcaldia_cierre': incident.alcaldia_cierre,
+            'colonia': incident.colonia
+            }
+
+    # return jsonify({'emote': 'Pepega', 'image-link':'https://pepegaclapwr.com/assets/rsz_pepega.png'})
+    return jsonify(resp)
