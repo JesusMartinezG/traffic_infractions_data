@@ -4,6 +4,11 @@ class Config:
 
 class DevelopementConfig(Config):
     DEBUG = True
+    # Sqlalchemy uri for sqlite database in instance folder
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///database.db'
+
+class DevelopementDatabase(Config):
+    DEBUG = True
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'trafico'
     MYSQL_PASSWORD = 'trafico.1234'
@@ -13,5 +18,6 @@ class DevelopementConfig(Config):
 
 
 config = {
-    'dev': DevelopementConfig
+    'dev': DevelopementConfig,
+    'dev_database': DevelopementDatabase
 }
