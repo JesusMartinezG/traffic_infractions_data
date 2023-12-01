@@ -9,20 +9,21 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='MarkerCluster.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='MarkerCluster.Default.css') }}">
 {% endblock %}
 
 {% block body %}
+<input id="filters" type="text">
+<button id="apply">Apply</button>
+<button id="asHeatmap">As Heatmap</button>
+<button id="asCluster">As Cluster</button>
 <div id="map"></div>
 {% endblock %}
 
 {%block customJS%}
-<script>
-    var map = L.map('map').setView([19.381074826513803, -99.13842300487916], 12);
-
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js" integrity="sha512-OFs3W4DIZ5ZkrDhBFtsCP6JXtMEDGmhl0QPlmWYBJay40TT1n3gt2Xuw8Pf/iezgW9CdabjkNChRqozl/YADmg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.0/heatmap.min.js" integrity="sha512-FpvmtV53P/z7yzv1TAIVH7PNz94EKXs5aV6ts/Zi+B/VeGU5Xwo6KIbwpTgKc0d4urD/BtkK50IC9785y68/AA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{{ url_for('static', filename='leaflet-heatmap.js') }}"></script>
+<script src="{{ url_for('static', filename='map.js') }}"></script>
 {%endblock%}
