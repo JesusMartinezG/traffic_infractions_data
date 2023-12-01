@@ -8,37 +8,36 @@ def filter_coordinates(args):
     conditions = []
     limit = 200
 
-    table = db.metadata.tables['inviales']
+    inviales_table = db.metadata.tables['inviales']
 
     if 'creacion' in args:
-        conditions.append(table.c.creacion == args['creacion'])
+        conditions.append(inviales_table.c.creacion == args['creacion'])
     if 'id' in args:
-        conditions.append(table.c.id == args['id'])
+        conditions.append(inviales_table.c.id == args['id'])
     if 'inicio' in args:
-        conditions.append(table.c.creacion >= args['inicio'])
+        conditions.append(inviales_table.c.creacion >= args['inicio'])
     if 'final' in args:
-        conditions.append(table.c.creacion <= args['final'])
+        conditions.append(inviales_table.c.creacion <= args['final'])
     if 'dia_semana' in args:
-        conditions.append(table.c.dia_semana.like(args['dia_semana']))
+        conditions.append(inviales_table.c.dia_semana.like(args['dia_semana']))
     if 'alcaldia_inicio' in args:
-        conditions.append(table.c.alcaldia_inicio.like(args['alcaldia_inicio']))
+        conditions.append(inviales_table.c.alcaldia_inicio.like(args['alcaldia_inicio']))
     if 'alcaldia_cierre' in args:
-        conditions.append(table.c.alcaldia_cierre.like(args['alcaldia_cierre']))
+        conditions.append(inviales_table.c.alcaldia_cierre.like(args['alcaldia_cierre']))
     if 'limit' in args:
-        try:
-            limit = min(int(args['limit']), 5000)
-        except ValueError:
-            pass
-    
-    if len(conditions):
-        registers = db.session.execute(db.select(table.c.latitud,table.c.longitud).where(and_(*conditions)).limit(limit).order_by(inviales.creacion))
-        return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
-    else:
-        registers = db.session.execute(db.select(db.metadata.tables['inviales'].c.latitud,db.metadata.tables['inviales'].c.longitud).limit(limit).order_by(inviales.creacion))
+        limit = min(int(args['limit']), 5000) if args['limit'].isdigit() else limit
 
-        if registers:
-            return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
-    
+    if conditions:
+        query = db.select(inviales_table.c.latitud, inviales_table.c.longitud).where(and_(*conditions)).limit(limit).order_by(inviales_table.c.creacion)
+        registers = db.session.execute(query)
+        return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
+
+    query = db.select(inviales_table.c.latitud, inviales_table.c.longitud).limit(limit).order_by(inviales_table.c.creacion)
+    registers = db.session.execute(query)
+
+    if registers:
+        return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
+
     return 'No data to show', 404
 
 
