@@ -16,6 +16,10 @@ def create_sqlite_instance():
 
     # create table schema
     cursor.execute('''
+        DROP TABLE IF EXISTS inViales
+        '''
+    )
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS inViales (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             folio TEXT UNIQUE NOT NULL,
@@ -80,7 +84,7 @@ def create_sqlite_instance():
                     ) 
                     VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                     ''',
-                    (row[0], f'{row[1]} {row[2]}',row[3], f'{row[4]} {row[5]}', row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15])
+                    (row[0], f'{row[1]} {row[2]}' if row[1]!='NA' and row[2]!='NA' else None,row[3], f'{row[4]} {row[5]}' if row[4]!='NA' and row[5]!='NA' else None, row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15])
                 )
 
                 next(counter)
