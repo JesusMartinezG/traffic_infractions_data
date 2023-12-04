@@ -2,30 +2,39 @@ from flask import jsonify, Response
 from flask_app.api.models.datos_viales import inviales
 from flask_app.database import db
 from sqlalchemy import and_
+from functools import lru_cache
 
-
+@lru_cache(maxsize=5)
 def filter_coordinates(args):
     conditions = []
     limit = 200
 
     inviales_table = db.metadata.tables['inviales']
 
-    if 'creacion' in args:
-        conditions.append(inviales_table.c.creacion == args['creacion'])
-    if 'id' in args:
-        conditions.append(inviales_table.c.id == args['id'])
-    if 'inicio' in args:
-        conditions.append(inviales_table.c.creacion >= args['inicio'])
-    if 'final' in args:
-        conditions.append(inviales_table.c.creacion <= args['final'])
-    if 'dia_semana' in args:
-        conditions.append(inviales_table.c.dia_semana.like(args['dia_semana']))
-    if 'alcaldia_inicio' in args:
-        conditions.append(inviales_table.c.alcaldia_inicio.like(args['alcaldia_inicio']))
-    if 'alcaldia_cierre' in args:
-        conditions.append(inviales_table.c.alcaldia_cierre.like(args['alcaldia_cierre']))
-    if 'limit' in args:
-        limit = min(int(args['limit']), 5000) if args['limit'].isdigit() else limit
+    valid_keys = {
+        'creacion',
+        'id',
+        'dia_semana',
+        'tipo_incidente_c4',
+        'incidente_c4',
+        'clas_con_f_alarma',
+        'tipo_entrada',
+        'alcaldia_inicio',
+        'alcaldia_cierre',
+        'colonia'
+    }
+
+    
+    for key, value in args.items():
+        if key == 'limit':
+            limit = min(int(value), 5000) if value.isdigit() else limit
+        elif key == 'inicio':
+            conditions.append(inviales_table.c.creacion >= value)
+        elif key == 'final':
+            conditions.append(inviales_table.c.creacion <= value)
+        elif key in valid_keys:
+            conditions.append(getattr(inviales_table.c, key).like(value))
+
 
     if conditions:
         query = db.select(inviales_table.c.latitud, inviales_table.c.longitud).where(and_(*conditions)).limit(limit).order_by(inviales_table.c.creacion)
