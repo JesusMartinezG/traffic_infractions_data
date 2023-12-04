@@ -14,11 +14,145 @@
 {% endblock %}
 
 {% block body %}
-<input id="filters" type="text">
-<button id="apply">Apply</button>
-<button id="asHeatmap">As Heatmap</button>
-<button id="asCluster">As Cluster</button>
-<div id="map"></div>
+<div class="container-fluid" style="width: 100vw;">
+    <div class="row">
+        <div class="col-md-2 text-center">
+            
+            <!-- Dropdown para días de la semana -->
+            <label class="form-label" for="dia_semana">Día de la Semana:</label>
+            <select class="form-select" id="dia_semana">
+            <option value="">-</option>
+            <option value="Domingo">Domingo</option>
+            <option value="Lunes">Lunes</option>
+            <option value="Martes">Martes</option>
+            <option value="Miércoles">Miércoles</option>
+            <option value="Jueves">Jueves</option>
+            <option value="Viernes">Viernes</option>
+            <option value="Sábado">Sábado</option>
+            </select>
+            <br>
+
+            <!-- Dropdown para tipo de incidente -->
+            <label class="form-label" for="tipo_incidente_c4">Tipo de Incidente:</label>
+            <select class="form-select" id="tipo_incidente_c4">
+            <option value="">-</option>
+            <option value="Accidente">Accidente</option>
+            <option value="Cadáver">Cadáver</option>
+            <option value="DetenciónCiudadana">Detención ciudadana</option>
+            <option value="Lesionado">Lesionado</option>
+            <option value="MiCalle">Mi Calle</option>
+            <option value="MiTaxi">Mi Taxi</option>
+            <option value="Sismo">Sismo</option>
+            </select>
+            <br>
+
+            <!-- Dropdown para tipo de accidente de tránsito -->
+            <label class="form-label" for="incidente_c4">Tipo de Accidente de Tránsito:</label>
+            <select class="form-select" id="incidente_c4">
+            <option value="">-</option>
+            <option value="Accidente automovilístico">Accidente automovilístico</option>
+            <option value="Atropellado">Atropellado</option>
+            <option value="Choque con lesionados">Choque con lesionados</option>
+            <option value="Choque con prensados">Choque con prensados</option>
+            <option value="Choque sin lesionados">Choque sin lesionados</option>
+            <option value="Ciclista">Ciclista</option>
+            <option value="Ferroviario">Ferroviario</option>
+            <option value="Incidente de tránsito">Incidente de tránsito</option>
+            <option value="Monopatín">Monopatín</option>
+            <option value="Motociclista">Motociclista</option>
+            <option value="Otros">Otros</option>
+            <option value="Persona atrapada / desbarrancada">Persona atrapada / desbarrancada</option>
+            <option value="Persona atropellada">Persona atropellada</option>
+            <option value="Vehiculo atrapado">Vehiculo atrapado</option>
+            <option value="Vehiculo desbarrancado">Vehiculo desbarrancado</option>
+            <option value="Vehiculo atrapado varado">Vehículo atrapado/varado</option>
+            <option value="Volcadura">Volcadura</option>
+            </select>
+            <br>
+
+            <!-- Dropdown para alcaldías -->
+            <label class="form-label" for="alcaldia_inicio">Alcaldía:</label>
+            <select class="form-select" id="alcaldia_inicio">
+            <option value="">-</option>
+            <option value="ALVARO OBREGON">ALVARO OBREGON</option>
+            <option value="AZCAPOTZALCO">AZCAPOTZALCO</option>
+            <option value="BENITO JUAREZ">BENITO JUAREZ</option>
+            <option value="COYOACAN">COYOACAN</option>
+            <option value="CUAJIMALPA DE MORELOS">CUAJIMALPA DE MORELOS</option>
+            <option value="CUAUHTEMOC">CUAUHTEMOC</option>
+            <option value="GUSTAVO A. MADERO">GUSTAVO A. MADERO</option>
+            <option value="IZTACALCO">IZTACALCO</option>
+            <option value="IZTAPALAPA">IZTAPALAPA</option>
+            <option value="LA MAGDALENA CONTRERAS">LA MAGDALENA CONTRERAS</option>
+            <option value="MIGUEL HIDALGO">MIGUEL HIDALGO</option>
+            <option value="MILPA ALTA">MILPA ALTA</option>
+            <option value="NA">NA</option>
+            <option value="TLAHUAC">TLAHUAC</option>
+            <option value="TLALPAN">TLALPAN</option>
+            <option value="VENUSTIANO CARRANZA">VENUSTIANO CARRANZA</option>
+            <option value="XOCHIMILCO">XOCHIMILCO</option>
+            </select>
+            <br>
+
+            <!-- Dropdown para letras -->
+            {# <label for="letras">Letra:</label>
+            <select id="letras">
+            <option value="">-</option>
+            <option value="A">A</option>
+            <option value="D">D</option>
+            <option value="F">F</option>
+            <option value="I">I</option>
+            <option value="N">N</option>
+            </select>
+            <br> #}
+
+            <!-- Dropdown para categoría de incidente -->
+            <label class="form-label" for="clas_con_f_alarma">Categoría de Incidente:</label>
+            <select class="form-select" id="clas_con_f_alarma">
+            <option value="">-</option>
+            <option value="DELITO">DELITO</option>
+            <option value="EMERGENCIA">EMERGENCIA</option>
+            <option value="FALSA ALARMA">FALSA ALARMA</option>
+            <option value="INCIDENTES EXTERNOS">INCIDENTES EXTERNOS</option>
+            <option value="URGENCIAS MEDICAS">URGENCIAS MEDICAS</option>
+            </select>
+            <br>
+
+            <!-- Dropdown para herramientas -->
+            <label class="form-label" for="tipo_entrada">Herramienta:</label>
+            <select class="form-select" id="tipo_entrada">
+            <option value="">-</option>
+            <option value="APLICATIVOS">APLICATIVOS</option>
+            <option value="BOTÓN DE AUXILIO">BOTÓN DE AUXILIO</option>
+            <option value="CÁMARA">CÁMARA</option>
+            <option value="LECTOR DE PLACAS">LECTOR DE PLACAS</option>
+            <option value="LLAMADA APP911">LLAMADA APP911</option>
+            <option value="LLAMADA DEL 066">LLAMADA DEL 066</option>
+            <option value="LLAMADA DEL 911">LLAMADA DEL 911</option>
+            <option value="NA">NA</option>
+            <option value="RADIO">RADIO</option>
+            <option value="REDES">REDES</option>
+            <option value="SOS MUJERES *765">SOS MUJERES *765</option>
+            <option value="ZELLO">ZELLO</option>
+            </select>
+            <br>
+            <label class="form-label" for="inicio">Inicio:</label>
+            <input class="form-control" id="inicio" type="date" min="2013-01-01" max="2023-12-31" value="2013-01-01">
+            <br>
+            <label class="form-label" for="final">Final:</label>
+            <input class="form-control" id="final" type="date" min="2013-01-01" max="2023-12-31" value="2023-12-31">
+            <br>
+
+            <label class="form-label" for="limit">Limit:</label>
+            <input class="form-control" id="limit" type="number" min="1" max="5000" value="100">
+            <br>
+            <button class="btn btn-success" id="apply" style="width: 100%;">Apply</button>
+        </div>
+        {# <div class="col-md-8"> #}
+        <div id="map" class="col-md-10"></div>
+        {# </div> #}
+    </div>
+</div>
 {% endblock %}
 
 {%block customJS%}
