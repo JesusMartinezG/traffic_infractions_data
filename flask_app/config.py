@@ -8,7 +8,7 @@ class DevelopementConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///database.db'
 
 class DevelopementDatabase(Config):
-    DEBUG = True
+    DEBUG = False
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'trafico'
     MYSQL_PASSWORD = 'trafico.1234'
