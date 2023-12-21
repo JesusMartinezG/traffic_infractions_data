@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+import locale
 
 from flask_app.config import config
 from flask_app.database import db
@@ -7,6 +8,7 @@ from flask_app.database import db
 
 def create_app(run_config='dev'):
     app = Flask(__name__, static_folder='webapp/static')
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
     app.config.from_object(config[run_config])
 
