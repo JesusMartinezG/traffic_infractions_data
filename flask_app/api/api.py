@@ -4,12 +4,12 @@ from flask_app.database import db
 from sqlalchemy import and_
 from functools import lru_cache
 
+inviales_table = db.metadata.tables['inviales']
+
 @lru_cache(maxsize=5)
 def filter_coordinates(args):
     conditions = []
     limit = 200
-
-    inviales_table = db.metadata.tables['inviales']
 
     valid_keys = {
         'creacion',
@@ -35,17 +35,33 @@ def filter_coordinates(args):
         elif key in valid_keys:
             conditions.append(getattr(inviales_table.c, key).like(value))
 
+    query = db.select(
+        inviales_table.c.folio,
+        inviales_table.c.latitud,
+        inviales_table.c.longitud,
+        inviales_table.c.creacion,
+        inviales_table.c.incidente_c4
+    )
 
-    if conditions:
-        query = db.select(inviales_table.c.latitud, inviales_table.c.longitud).where(and_(*conditions)).limit(limit).order_by(inviales_table.c.creacion)
-        registers = db.session.execute(query)
-        return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
+    if conditions: # query with filters
+        query = query.where(and_(*conditions))
 
-    query = db.select(inviales_table.c.latitud, inviales_table.c.longitud).limit(limit).order_by(inviales_table.c.creacion)
+    query = query.limit(limit).order_by(inviales_table.c.creacion)
+    
     registers = db.session.execute(query)
 
     if registers:
-        return jsonify([{'latitud': register.latitud, 'longitud': register.longitud} for register in registers])
+        result = jsonify(
+            [{
+                'folio': register.folio,
+                'latitud': register.latitud,
+                'longitud': register.longitud,
+                'creacion': register.creacion.strftime('%d-%m-%Y %H:%M:%S'),
+                'tipo': register.incidente_c4
+            } for register in registers])
+        
+        return result
+
 
     return 'No data to show', 404
 
@@ -71,3 +87,8 @@ def id_coordinates(id):
 
     # return jsonify({'emote': 'Pepega', 'image-link':'https://pepegaclapwr.com/assets/rsz_pepega.png'})
     return jsonify(resp)
+
+import random
+def bar_char_data(columns=inviales_table.c.creacion, value=inviales_table.c.incidente_c4):
+    
+    return jsonify({'x':['giraffes', 'orangutans', 'monkeys'], 'y':[random.randint(0,100) for _ in range(3)], 'type':'bar'})
