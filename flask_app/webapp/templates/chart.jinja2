@@ -1,0 +1,10 @@
+{% extends "base.jinja2" %}
+{% block customSources %}<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>{% endblock %}
+{% block body%}
+<div id="tester" style="width:600px;height:250px;"></div>
+<div id="barChart" style="width:600px;height:250px;"></div>
+<button id="showData">Show data</button>
+{% endblock %}
+{% block customJS %}
+<script src="{{ url_for('static', filename='chart.js') }}"></script>
+{% endblock %}
