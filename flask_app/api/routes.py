@@ -17,4 +17,8 @@ def getCoordinatesByFilter():
         args = request.args
         return api.filter_coordinates(args)
 
+@bp.route('/getBarChartData/', methods=['GET'])
+def getBarChartData():
+    return api.bar_char_data()
+
     
