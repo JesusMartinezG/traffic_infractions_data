@@ -76,6 +76,7 @@ apply.addEventListener('click', function() {
                 var markers = L.markerClusterGroup();
                 for (var i = 0; i < data.length; i++) {
                     var mark = L.marker([data[i].latitud, data[i].longitud]);
+                    mark.bindPopup("<b>"+data[i].tipo+": "+data[i].folio+"</b><br><div style='text-align: center; width: 100%'>"+data[i].creacion+"</div>");
                     markers.addLayer(mark);
                 }
                 markers.addTo(map);
@@ -92,6 +93,7 @@ apply.addEventListener('click', function() {
                 var markers = L.markerClusterGroup();
                 for (var i = 0; i < data.length; i++) {
                     var mark = L.marker([data[i].latitud, data[i].longitud]);
+                    mark.bindPopup("<b>"+data[i].tipo+"</b><br>"+data[i].creacion);
                     markers.addLayer(mark);
                 }
                 markers.addTo(map);
